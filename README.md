@@ -21,9 +21,8 @@ npm install @gisce/conscheck
 
 Here is a basic example of how to use `@gisce/conscheck`:
 
-
 ```typescript
-import evaluateCondition from '@gisce/conscheck';
+import { evaluateCondition } from "@gisce/conscheck";
 
 const condition = {
   condition: "AND",
@@ -31,14 +30,14 @@ const condition = {
     {
       field: "age",
       operator: ">=",
-      value: 18
+      value: 18,
     },
     {
       field: "citizenship",
       operator: "=",
-      value: true
-    }
-  ]
+      value: true,
+    },
+  ],
 };
 
 const sampleObject = { age: 20, citizenship: true };
@@ -61,21 +60,21 @@ const nestedCondition = {
         {
           field: "age",
           operator: ">=",
-          value: 65
+          value: 65,
         },
         {
           field: "retired",
           operator: "=",
-          value: true
-        }
-      ]
+          value: true,
+        },
+      ],
     },
     {
       field: "age",
       operator: "<",
-      value: 18
-    }
-  ]
+      value: 18,
+    },
+  ],
 };
 
 const anotherSampleObject = { age: 70, retired: true };
@@ -85,6 +84,7 @@ console.log(nestedResult); // Output: true
 ```
 
 ## Contributing
+
 Contributions to `@gisce/conscheck` are welcome. Please feel free to submit pull requests or open issues to improve the library.
 
 ## License

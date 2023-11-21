@@ -1,0 +1,42 @@
+name: ALPHA - Create PR on ooui.js
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  create-pr:
+    if: github.event.release.prerelease == false && !contains(github.event.release.tag_name, '-alpha.') && !contains(github.event.release.tag_name, '-rc.')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout webclient repository
+      uses: actions/checkout@v2
+      with:
+        repository: 'gisce/ooui.js'
+        ref: alpha
+        token: ${{ secrets.GH_PAT }}
+
+    - name: Update library version in package.json
+      run: |
+        NEW_VERSION=${{ github.event.release.tag_name }}
+        NEW_VERSION=${NEW_VERSION#v}  # Remove the leading 'v'
+        sed -i 's|"@gisce/conscheck": "[^"]*"|"@gisce/conscheck": "'"$NEW_VERSION"'"|' package.json
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20.5.0'
+
+    - name: Install npm dependencies and generate package-lock.json
+      run: |
+        npm install
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GH_PAT }}
+        commit-message: "fix: Update @gisce/conscheck to ${{ github.event.release.tag_name }}"
+        title: "Update @gisce/conscheck to ${{ github.event.release.tag_name }}"
+        branch: "update-conscheck-${{ github.event.release.tag_name }}"

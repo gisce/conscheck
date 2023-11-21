@@ -1,6 +1,4 @@
-// src/index.ts
-
-export type Operator = '=' | '>=' | '<=' | '>' | '<' | '!=';
+export type Operator = "=" | ">=" | "<=" | ">" | "<" | "!=";
 
 export interface Rule {
   field: string;
@@ -9,15 +7,21 @@ export interface Rule {
 }
 
 export interface Condition {
-  condition: 'AND' | 'OR';
+  condition: "AND" | "OR";
   rules: Array<Rule | NestedCondition>;
 }
 
 type NestedCondition = Condition;
 
-function evaluateCondition(object: Record<string, any>, condition: Rule | NestedCondition): boolean {
-  const getValue = (obj: Record<string, any>, valueOrField: string | number | boolean): any => {
-    if (typeof valueOrField === 'string' && valueOrField.startsWith('$')) {
+export const evaluateCondition = (
+  object: Record<string, any>,
+  condition: Rule | NestedCondition,
+): boolean => {
+  const getValue = (
+    obj: Record<string, any>,
+    valueOrField: string | number | boolean,
+  ): any => {
+    if (typeof valueOrField === "string" && valueOrField.startsWith("$")) {
       const fieldName = valueOrField.slice(1);
       if (fieldName in obj) {
         return obj[fieldName];
@@ -27,38 +31,42 @@ function evaluateCondition(object: Record<string, any>, condition: Rule | Nested
     return valueOrField;
   };
 
-  if ('field' in condition && 'operator' in condition && 'value' in condition) {
-    const rule = condition as Rule;
+  if ("field" in condition && "operator" in condition && "value" in condition) {
+    const rule = condition;
     const ruleField = getValue(object, `$${rule.field}`);
     const ruleValue = getValue(object, rule.value);
     switch (rule.operator) {
-      case '=':
+      case "=":
         return ruleField === ruleValue;
-      case '>=':
+      case ">=":
         return ruleField >= ruleValue;
-      case '<=':
+      case "<=":
         return ruleField <= ruleValue;
-      case '>':
+      case ">":
         return ruleField > ruleValue;
-      case '<':
+      case "<":
         return ruleField < ruleValue;
-      case '!=':
+      case "!=":
         return ruleField !== ruleValue;
       default:
-        throw new Error(`Unsupported operator: ${rule.operator}`);
+        throw new Error(`Unsupported operator: ${rule.operator as string}`);
     }
-  } else if ('condition' in condition && 'rules' in condition) {
-    const nestedCondition = condition as NestedCondition;
-    if (nestedCondition.condition === 'AND') {
-      return nestedCondition.rules.every(rule => evaluateCondition(object, rule));
-    } else if (nestedCondition.condition === 'OR') {
-      return nestedCondition.rules.some(rule => evaluateCondition(object, rule));
+  } else if ("condition" in condition && "rules" in condition) {
+    const nestedCondition = condition;
+    if (nestedCondition.condition === "AND") {
+      return nestedCondition.rules.every((rule) =>
+        evaluateCondition(object, rule),
+      );
+    } else if (nestedCondition.condition === "OR") {
+      return nestedCondition.rules.some((rule) =>
+        evaluateCondition(object, rule),
+      );
     } else {
-      throw new Error(`Unsupported condition type: ${nestedCondition.condition}`);
+      throw new Error(
+        `Unsupported condition type: ${nestedCondition.condition as string}`,
+      );
     }
   } else {
-    throw new Error('Invalid condition format');
+    throw new Error("Invalid condition format");
   }
-}
-
-export default evaluateCondition;
+};

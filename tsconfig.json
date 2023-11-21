@@ -1,12 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "outDir": "./dist",
+    "declarationDir": "dist",
+    "declarationMap": true /* Generates a sourcemap for each corresponding '.d.ts' file. */,
+    "esModuleInterop": false,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
     "strict": true,
-    "esModuleInterop": true
+    "strictBindCallApply": false /* Enable strict 'bind', 'call', and 'apply' methods on functions. */,
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "useUnknownInCatchVariables": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "spec"]
 }
