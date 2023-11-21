@@ -20,7 +20,12 @@
     "dist",
     "src"
   ],
-  "module": "dist/conscheck.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/conscheck.es.js"
+    }
+  },
+  "module": "./dist/conscheck.es.js",
   "engines": {
     "node": "20.5.0"
   },
