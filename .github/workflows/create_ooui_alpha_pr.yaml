@@ -7,7 +7,7 @@ on:
 
 jobs:
   create-pr:
-    if: github.event.release.prerelease == true && contains(github.event.release.tag_name, '-alpha.')
+    if: github.event.release.prerelease == false && !contains(github.event.release.tag_name, '-alpha.') && !contains(github.event.release.tag_name, '-rc.')
     runs-on: ubuntu-latest
 
     steps:
