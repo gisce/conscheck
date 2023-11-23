@@ -26,7 +26,6 @@ export const evaluateCondition = (
       if (fieldName in obj) {
         return obj[fieldName];
       }
-      throw new Error(`Field not found: ${fieldName}`);
     }
     return valueOrField;
   };
