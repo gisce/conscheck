@@ -74,4 +74,25 @@ describe("evaluateCondition", () => {
     const sampleObject = { age: 70, citizenship: true };
     expect(evaluateCondition(sampleObject, condition)).toBe(true);
   });
+
+  it("should correctly evaluate a simple AND condition with undefined fields", () => {
+    const condition: Condition = {
+      condition: "AND",
+      rules: [
+        {
+          field: "age",
+          operator: ">=",
+          value: 18,
+        },
+        {
+          field: "citizenship",
+          operator: "=",
+          value: true,
+        },
+      ],
+    };
+
+    const sampleObject = {};
+    expect(evaluateCondition(sampleObject, condition)).toBe(false);
+  });
 });
