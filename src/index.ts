@@ -60,9 +60,9 @@ export const evaluateCondition = (
       case "!=":
         return ruleField != ruleValue;
       case "in":
-        return ruleField.includes(ruleValue);
+        return ruleValue.includes(ruleField);
       case "not in":
-        return !ruleField.includes(ruleValue);
+        return !ruleValue.includes(ruleField);
       default:
         throw new Error(`Unsupported operator: ${rule.operator as string}`);
     }
