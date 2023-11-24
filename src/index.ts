@@ -1,4 +1,14 @@
-export type Operator = "=" | ">=" | "<=" | ">" | "<" | "!=";
+export type Operator =
+  | "="
+  | "=="
+  | ">="
+  | "<="
+  | ">"
+  | "<"
+  | "!="
+  | "<>"
+  | "in"
+  | "not in";
 
 export interface Rule {
   field: string;
@@ -36,7 +46,8 @@ export const evaluateCondition = (
     const ruleValue = getValue(object, rule.value);
     switch (rule.operator) {
       case "=":
-        return ruleField === ruleValue;
+      case "==":
+        return ruleField == ruleValue;
       case ">=":
         return ruleField >= ruleValue;
       case "<=":
@@ -45,8 +56,13 @@ export const evaluateCondition = (
         return ruleField > ruleValue;
       case "<":
         return ruleField < ruleValue;
+      case "<>":
       case "!=":
-        return ruleField !== ruleValue;
+        return ruleField != ruleValue;
+      case "in":
+        return ruleField.includes(ruleValue);
+      case "not in":
+        return !ruleField.includes(ruleValue);
       default:
         throw new Error(`Unsupported operator: ${rule.operator as string}`);
     }
