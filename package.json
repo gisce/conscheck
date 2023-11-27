@@ -1,6 +1,6 @@
 {
   "name": "@gisce/conscheck",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A JavaScript library for evaluating JSON-based conditions. It allows complex conditional logic to be defined and interpreted from JSON structures, enabling dynamic decision-making in applications.",
   "keywords": [
     "conditions",
