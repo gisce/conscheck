@@ -119,11 +119,11 @@ export const evaluateCondition = ({
     const nestedCondition = condition;
     if (nestedCondition.condition === "AND") {
       return nestedCondition.rules.every((rule) =>
-        evaluateCondition({ object, condition: rule }),
+        evaluateCondition({ object, condition: rule, evaluateFieldComparison }),
       );
     } else if (nestedCondition.condition === "OR") {
       return nestedCondition.rules.some((rule) =>
-        evaluateCondition({ object, condition: rule }),
+        evaluateCondition({ object, condition: rule, evaluateFieldComparison }),
       );
     } else {
       throw new Error(
