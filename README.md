@@ -40,9 +40,9 @@ const condition = {
   ],
 };
 
-const sampleObject = { age: 20, citizenship: true };
+const object = { age: 20, citizenship: true };
 
-const result = evaluateCondition(sampleObject, condition);
+const result = evaluateCondition({ object, condition });
 console.log(result); // Output: true
 ```
 
@@ -77,9 +77,9 @@ const nestedCondition = {
   ],
 };
 
-const anotherSampleObject = { age: 70, retired: true };
+const object = { age: 70, retired: true };
 
-const nestedResult = evaluateCondition(anotherSampleObject, nestedCondition);
+const nestedResult = evaluateCondition({ object, condition: nestedCondition });
 console.log(nestedResult); // Output: true
 ```
 

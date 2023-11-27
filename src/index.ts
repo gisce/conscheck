@@ -23,58 +23,107 @@ export interface Condition {
 
 type NestedCondition = Condition;
 
-export const evaluateCondition = (
-  object: Record<string, any>,
-  condition: Rule | NestedCondition,
-): boolean => {
-  const getValue = (
-    obj: Record<string, any>,
-    valueOrField: string | number | boolean,
-  ): any => {
-    if (typeof valueOrField === "string" && valueOrField.startsWith("$")) {
-      const fieldName = valueOrField.slice(1);
-      if (fieldName in obj) {
-        return obj[fieldName];
-      }
-    }
-    return valueOrField;
-  };
+export type FieldComparisonParams = {
+  fieldName: string;
+  valueInObject: any;
+  expectedValue: any;
+};
 
+export type FieldComparisonResult = {
+  modifiedValueInObject?: any;
+  modifiedExpectedValue?: any;
+  directOutcome?: boolean;
+};
+
+const getValue = (
+  obj: Record<string, any>,
+  valueOrField: string | number | boolean,
+): any => {
+  if (isField(valueOrField)) {
+    const fieldName = (valueOrField as string).slice(1);
+    if (fieldName in obj) {
+      return obj[fieldName];
+    }
+  }
+  return valueOrField;
+};
+
+const isField = (value: string | number | boolean): boolean =>
+  typeof value === "string" && value.startsWith("$");
+
+export const evaluateCondition = ({
+  object,
+  condition,
+  evaluateFieldComparison,
+}: {
+  object: Record<string, any>;
+  condition: Rule | NestedCondition;
+  evaluateFieldComparison?: (
+    args: FieldComparisonParams,
+  ) => FieldComparisonResult;
+}): boolean => {
   if ("field" in condition && "operator" in condition && "value" in condition) {
-    const rule = condition;
-    const ruleField = getValue(object, `$${rule.field}`);
-    const ruleValue = getValue(object, rule.value);
-    switch (rule.operator) {
+    const fieldName = condition.field;
+    let valueInObject = object[fieldName];
+    let expectedValue = getValue(object, condition.value);
+
+    // Prepare parameters for evaluateFieldComparison
+    const comparisonParams: FieldComparisonParams = {
+      fieldName,
+      valueInObject,
+      expectedValue,
+    };
+
+    // Evaluate the field comparison if the callback is provided
+    const comparisonResult = evaluateFieldComparison?.(comparisonParams) || {
+      directOutcome: undefined,
+      modifiedValueInObject: null,
+      modifiedExpectedValue: null,
+    };
+
+    if (comparisonResult?.directOutcome !== undefined) {
+      return comparisonResult.directOutcome;
+    }
+    if (comparisonResult?.modifiedValueInObject !== null) {
+      valueInObject = comparisonResult?.modifiedValueInObject;
+    }
+    if (comparisonResult?.modifiedExpectedValue !== null) {
+      expectedValue = comparisonResult?.modifiedExpectedValue;
+    }
+
+    switch (condition.operator) {
       case "=":
       case "==":
-        return ruleField == ruleValue;
+        return valueInObject == expectedValue;
       case ">=":
-        return ruleField >= ruleValue;
+        return valueInObject >= expectedValue;
       case "<=":
-        return ruleField <= ruleValue;
+        return valueInObject <= expectedValue;
       case ">":
-        return ruleField > ruleValue;
+        return valueInObject > expectedValue;
       case "<":
-        return ruleField < ruleValue;
+        return valueInObject < expectedValue;
       case "<>":
       case "!=":
-        return ruleField != ruleValue;
+        return valueInObject != expectedValue;
       case "in":
-        return ruleValue.includes(ruleField);
+        return expectedValue.includes(valueInObject);
       case "not in":
-        return !ruleValue.includes(ruleField);
+        return !expectedValue.includes(valueInObject);
       default:
-        throw new Error(`Unsupported operator: ${rule.operator as string}`);
+        throw new Error(
+          `Unsupported operator: ${condition.operator as string}`,
+        );
     }
   } else if ("condition" in condition && "rules" in condition) {
     const nestedCondition = condition;
     if (nestedCondition.condition === "AND") {
       return nestedCondition.rules.every((rule) =>
-        evaluateCondition(object, rule),
+        evaluateCondition({ object, condition: rule }),
       );
     } else if (nestedCondition.condition === "OR") {
       return nestedCondition.rules.some((rule) =>
-        evaluateCondition(object, rule),
+        evaluateCondition({ object, condition: rule }),
       );
     } else {
       throw new Error(

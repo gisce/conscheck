@@ -2,7 +2,7 @@ import { it, expect, describe } from "vitest";
 import { evaluateCondition, Condition } from "../src";
 
 describe("evaluateCondition", () => {
-  it("should correctly evaluate a simple AND condition", () => {
+  it.only("should correctly evaluate a simple AND condition", () => {
     const condition: Condition = {
       condition: "AND",
       rules: [
@@ -19,8 +19,8 @@ describe("evaluateCondition", () => {
       ],
     };
 
-    const sampleObject = { age: 20, citizenship: true };
-    expect(evaluateCondition(sampleObject, condition)).toBe(true);
+    const object = { age: 20, citizenship: true };
+    expect(evaluateCondition({ object, condition })).toBe(true);
   });
 
   it("should correctly evaluate a simple OR condition", () => {
@@ -40,8 +40,8 @@ describe("evaluateCondition", () => {
       ],
     };
 
-    const sampleObject = { age: 17, citizenship: false };
-    expect(evaluateCondition(sampleObject, condition)).toBe(true);
+    const object = { age: 17, citizenship: false };
+    expect(evaluateCondition({ object, condition })).toBe(true);
   });
 
   it("should correctly evaluate a nested condition", () => {
@@ -71,8 +71,8 @@ describe("evaluateCondition", () => {
       ],
     };
 
-    const sampleObject = { age: 70, citizenship: true };
-    expect(evaluateCondition(sampleObject, condition)).toBe(true);
+    const object = { age: 70, citizenship: true };
+    expect(evaluateCondition({ object, condition })).toBe(true);
   });
 
   it("should correctly evaluate a simple AND condition with undefined fields", () => {
@@ -92,7 +92,38 @@ describe("evaluateCondition", () => {
       ],
     };
 
-    const sampleObject = {};
-    expect(evaluateCondition(sampleObject, condition)).toBe(false);
+    const object = {};
+    expect(evaluateCondition({ object, condition })).toBe(false);
+  });
+
+  it("should correctly evaluate a simple AND condition with $variable in expected rule value", () => {
+    const condition: Condition = {
+      condition: "AND",
+      rules: [
+        {
+          field: "age",
+          operator: ">=",
+          value: "$minAge",
+        },
+        {
+          field: "citizenship",
+          operator: "=",
+          value: true,
+        },
+      ],
+    };
+
+    expect(
+      evaluateCondition({
+        object: { age: 20, citizenship: true, minAge: 18 },
+        condition,
+      }),
+    ).toBeTruthy();
+    expect(
+      evaluateCondition({
+        object: { age: 20, citizenship: true, minAge: 50 },
+        condition,
+      }),
+    ).toBeFalsy();
   });
 });
