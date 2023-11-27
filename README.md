@@ -83,6 +83,28 @@ const nestedResult = evaluateCondition({ object, condition: nestedCondition });
 console.log(nestedResult); // Output: true
 ```
 
+### Optional `evaluateFieldComparison` Function
+
+You can pass a function to `evaluateCondition` to modify the default field comparison behaviour. This function will be called for each field comparison in the condition, and has the following signature:
+
+```typescript
+function evaluateFieldComparison({
+  fieldName,
+  valueInObject,
+  expectedValue,
+}: FieldComparisonParams): FieldComparisonResult;
+```
+
+The function should return a `FieldComparisonResult` object, which has the following structure:
+
+```typescript
+interface FieldComparisonResult {
+  modifiedValueInObject?: any;
+  modifiedExpectedValue?: any;
+  directOutcome?: boolean;
+}
+```
+
 ## Contributing
 
 Contributions to `@gisce/conscheck` are welcome. Please feel free to submit pull requests or open issues to improve the library.
