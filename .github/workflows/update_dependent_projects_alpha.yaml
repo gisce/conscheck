@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - project: "gisce/ooui.js"
+          - project: "gisce/ooui"
             branch: ${{ env.BRANCH_NAME }}
     steps:
       - name: Call Reusable Workflow for each project
