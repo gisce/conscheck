@@ -22,14 +22,15 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/conscheck.es.js"
+      "import": "./dist/conscheck.es.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "module": "./dist/conscheck.es.js",
   "engines": {
     "node": "20.5.0"
   },
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "analyze": "npx vite-bundle-visualizer",
     "build": "tsc --noEmit && vite build",
