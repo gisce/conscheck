@@ -27,9 +27,6 @@
     }
   },
   "module": "./dist/conscheck.es.js",
-  "engines": {
-    "node": "20.5.0"
-  },
   "types": "./dist/index.d.ts",
   "scripts": {
     "analyze": "npx vite-bundle-visualizer",
